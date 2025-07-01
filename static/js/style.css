@@ -1,0 +1,536 @@
+/* CSS Variables for better organization */
+:root {
+    --bg-dark-blue: #001F3F; /* Kept for reference, but not used for body bg */
+    --container-bg: #1A2A3A; /* Header and main container background */
+    --card-bg: #2A3D50; /* Default ranking card background (for positions 4+) */
+    --text-light: #E0E0E0; /* General light text */
+    --text-muted: #99AABB; /* Muted text for descriptions/inactive links */
+
+    --page-bg-color: #B8F2FF; /* Background color for the entire page */
+
+    /* Card background colors for top ranks */
+    --gold-card-bg: #FFD700; /* Gold card background for 1st place */
+    --silver-card-bg: #D3D3D3; /* Silver card background for 2nd place */
+    --bronze-card-bg: #CD7F32; /* Bronze card background for 3rd place */
+
+    /* Text colors for names and indications on top rank cards */
+    --gold-text-color: #333; /* Dark text for contrast on gold card */
+    --silver-text-color: #333; /* Dark text for contrast on silver card */
+    --bronze-text-color: #FFF; /* Light text for contrast on bronze card */
+
+    --border-color: #334455; /* Separator lines, placeholder borders */
+    --transition-speed: 0.3s;
+    --border-radius-size: 12px; /* Consistent border-radius for cards and main container */
+}
+
+/* Base Styles */
+body {
+    font-family: 'Poppins', Arial, sans-serif; /* Using Poppins from Google Fonts */
+    background-color: var(--page-bg-color); /* Uses the new page background color */
+    color: var(--text-light); /* Default text color for the body */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto; /* Allows scrolling */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Main Container */
+.container {
+    background-color: var(--container-bg);
+    width: 100%;
+    min-height: 100vh;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); /* Stronger, softer shadow */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Section */
+header {
+    background-color: var(--container-bg); /* Match container background */
+    padding: 25px 0 0; /* Top padding, no side padding here */
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 100;
+    position: relative;
+}
+
+/* Content wrapper within header and main */
+.header-content,
+.main-content {
+    max-width: 760px; /* Wider for more content space */
+    margin: 0 auto; /* Center content */
+    padding: 0 30px; /* More inner padding */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between; /* Default for mobile/small screens */
+    align-items: center;
+    margin-bottom: 0;
+    padding-bottom: 25px;
+}
+
+/* Title "Ranking" styling */
+header h1 {
+    color: var(--gold-card-bg); /* Using gold color for title for consistency */
+    margin: 0;
+    font-size: 3.2em; /* Slightly larger for prominence */
+    font-weight: 700;
+    letter-spacing: 1.5px; /* More prominent letter spacing */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 5px rgba(255, 215, 0, 0.5); /* Enhanced shadow */
+    transition: transform var(--transition-speed) ease-in-out;
+}
+header h1:hover {
+    transform: scale(1.03); /* More noticeable hover effect */
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Hamburger Menu (Initially hidden on PC, visible on mobile) */
+.hamburger-menu {
+    display: none; /* Hidden by default on larger screens */
+    width: 34px; /* Slightly larger hamburger */
+    height: 26px;
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 200;
+    transition: transform var(--transition-speed) ease-in-out;
+}
+.hamburger-menu:hover {
+    transform: scale(1.15); /* More pronounced hover */
+}
+
+.hamburger-menu span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: var(--text-light);
+    border-radius: 2px;
+    transition: all var(--transition-speed) ease-in-out;
+}
+
+/* Hamburger active state (cross icon) */
+.hamburger-menu.active span:nth-child(1) {
+    transform: translateY(11px) rotate(45deg); /* Adjusted for larger hamburger */
+}
+.hamburger-menu.active span:nth-child(2) {
+    opacity: 0;
+}
+.hamburger-menu.active span:nth-child(3) {
+    transform: translateY(-12px) rotate(-45deg); /* Adjusted for larger hamburger */
+}
+
+/* Navigation (Desktop and Mobile) */
+.main-nav {
+    /* Default (mobile) styles will be applied via media query */
+    display: flex; /* Initially hidden, controlled by media queries */
+    justify-content: flex-start;
+    position: static;
+    width: auto;
+    max-width: none;
+    height: auto;
+    background-color: transparent;
+    box-shadow: none;
+    padding-top: 0;
+    z-index: auto;
+    margin-bottom: 25px; /* Spacing below desktop nav */
+    transition: none;
+}
+
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row; /* Desktop: horizontal */
+    align-items: center;
+    padding: 0;
+    border-bottom: none;
+    gap: 40px; /* Increased space between desktop links */
+}
+
+.main-nav li {
+    width: auto;
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+    text-align: center;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    transition: color var(--transition-speed) ease-in-out, background-color var(--transition-speed) ease-in-out, transform var(--transition-speed) ease-in-out;
+    display: inline-block;
+    padding: 10px 20px; /* Slightly more padding for desktop links */
+    font-size: 1.05em; /* Slightly larger font for desktop links */
+    border-radius: 8px; /* More rounded corners */
+}
+
+.main-nav a:hover {
+    color: var(--text-light);
+    background-color: rgba(255, 255, 255, 0.12); /* More noticeable hover background */
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.main-nav li.active a {
+    color: var(--text-light);
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.15); /* Solid background for active link */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for active link */
+    transform: translateY(-1px); /* Keep it slightly lifted */
+}
+
+/* Main Content Area */
+main {
+    flex-grow: 1;
+    padding: 40px 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ranking Items */
+.ranking-item {
+    background-color: var(--card-bg); /* Default background for general cards */
+    border-radius: var(--border-radius-size);
+    padding: 22px 30px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    transition: transform var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out, background-color var(--transition-speed) ease-in-out;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInSlideUp 0.6s ease-out forwards;
+}
+
+/* Stagger animation delay for each item */
+.ranking-item:nth-child(1) { animation-delay: 0.1s; }
+.ranking-item:nth-child(2) { animation-delay: 0.2s; }
+.ranking-item:nth-child(3) { animation-delay: 0.3s; }
+.ranking-item:nth-child(4) { animation-delay: 0.4s; }
+.ranking-item:nth-child(5) { animation-delay: 0.5s; }
+.ranking-item:nth-child(6) { animation-delay: 0.6s; }
+.ranking-item:nth-child(7) { animation-delay: 0.7s; }
+.ranking-item:nth-child(8) { animation-delay: 0.8s; }
+.ranking-item:nth-child(9) { animation-delay: 0.9s; }
+.ranking-item:nth-child(10) { animation-delay: 1.0s; }
+.ranking-item:nth-child(11) { animation-delay: 1.1s; }
+
+
+@keyframes fadeInSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.ranking-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+    background-color: #3a4d60;
+}
+
+.ranking-item .rank-circle {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.3em;
+    margin-right: 30px;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+    transition: all var(--transition-speed) ease-in-out;
+}
+.ranking-item .user-info {
+    flex-grow: 1;
+}
+
+.ranking-item .user-info h3 {
+    margin: 0;
+    font-size: 1.25em;
+    color: var(--text-light); /* Default text color for names */
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.ranking-item .user-info p {
+    margin: 6px 0 0;
+    font-size: 1em;
+    color: var(--text-muted); /* Default text color for indications */
+}
+
+/* Specific styles for top ranks */
+/* Gold Rank */
+.ranking-item.gold {
+    background-color: var(--gold-card-bg); /* Card background for 1st place */
+}
+.ranking-item.gold .rank-circle {
+    background-color: #FFD700; /* Gold color for the rank number circle */
+    color: #222; /* Dark text for rank number */
+    border: 4px solid #e6b800;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), inset 0 0 10px rgba(0,0,0,0.4);
+}
+.ranking-item.gold .user-info h3 {
+    color: var(--gold-text-color); /* Dark text for name on gold card */
+}
+.ranking-item.gold .user-info p {
+    color: var(--gold-text-color); /* Dark text for indications on gold card */
+}
+
+/* Silver Rank */
+.ranking-item.silver {
+    background-color: var(--silver-card-bg); /* Card background for 2nd place */
+}
+.ranking-item.silver .rank-circle {
+    background-color: #A9A9A9; /* Silver color for the rank number circle */
+    color: #222; /* Dark text for rank number */
+    border: 4px solid #808080;
+    box-shadow: 0 0 15px rgba(169, 169, 169, 0.6), inset 0 0 10px rgba(0,0,0,0.4);
+}
+.ranking-item.silver .user-info h3 {
+    color: var(--silver-text-color); /* Dark text for name on silver card */
+}
+.ranking-item.silver .user-info p {
+    color: var(--silver-text-color); /* Dark text for indications on silver card */
+}
+
+/* Bronze Rank */
+.ranking-item.bronze {
+    background-color: var(--bronze-card-bg); /* Card background for 3rd place */
+}
+.ranking-item.bronze .rank-circle {
+    background-color: #B8860B; /* Bronze color for the rank number circle */
+    color: #FFF; /* Light text for rank number */
+    border: 4px solid #8B4513;
+    box-shadow: 0 0 12px rgba(184, 134, 11, 0.6), inset 0 0 10px rgba(0,0,0,0.4);
+}
+.ranking-item.bronze .user-info h3 {
+    color: var(--bronze-text-color); /* Light text for name on bronze card */
+}
+.ranking-item.bronze .user-info p {
+    color: var(--bronze-text-color); /* Light text for indications on bronze card */
+}
+
+/* --- Responsive Design Media Queries --- */
+
+/* Desktop Specific Styles (min-width: 768px) */
+@media (min-width: 768px) {
+    .header-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center header content */
+        padding-top: 40px; /* More top padding for desktop header */
+    }
+    .header-top {
+        width: 100%;
+        justify-content: center; /* Center the title on desktop */
+        margin-bottom: 20px; /* Space between title and nav */
+    }
+    header h1 {
+        /* No specific overrides here, inherits from base */
+    }
+    .header-right {
+        display: none; /* Hide hamburger on desktop */
+    }
+
+    /* Desktop Nav Bar */
+    .main-nav {
+        display: flex; /* Show nav bar on desktop */
+        position: static; /* Remove fixed positioning */
+        width: auto;
+        max-width: none;
+        height: auto;
+        background-color: transparent; /* No background for desktop nav */
+        box-shadow: none;
+        padding-top: 0;
+        z-index: auto;
+        margin-bottom: 30px; /* More spacing below desktop nav */
+        justify-content: center; /* Center the nav links */
+    }
+    .main-nav ul {
+        flex-direction: row; /* Horizontal links */
+        gap: 40px; /* More spacing between links */
+    }
+    .main-nav li {
+        border-bottom: none; /* No borders for desktop nav items */
+        padding-bottom: 0;
+    }
+    .main-nav a {
+        padding: 10px 20px; /* Padding for click area */
+    }
+}
+
+/* Adjustments for medium screens (between mobile and desktop) */
+@media (max-width: 1024px) {
+    .header-content,
+    .main-content {
+        padding: 0 25px;
+    }
+    header h1 {
+        font-size: 2.8em; /* Slightly smaller for medium screens */
+    }
+}
+
+/* Mobile Specific Styles (max-width: 767px) */
+@media (max-width: 767px) {
+    .header-top {
+        justify-content: space-between; /* Restore space-between for mobile */
+    }
+    .hamburger-menu {
+        display: flex; /* Show hamburger on mobile */
+    }
+    header h1 {
+        font-size: 2.5em; /* Smaller title for mobile */
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    }
+
+    /* Mobile Menu Overlay Styles */
+    .main-nav {
+        display: block; /* Still block for mobile slide-in */
+        position: fixed; /* Overlay */
+        top: 0;
+        right: -100%; /* Hidden off-screen */
+        width: 75%;
+        max-width: 320px;
+        height: 100vh;
+        background-color: var(--container-bg); /* Use container bg for mobile menu */
+        box-shadow: -6px 0 15px rgba(0, 0, 0, 0.4);
+        padding-top: 100px; /* Space for header in mobile menu */
+        z-index: 150;
+        box-sizing: border-box;
+        overflow-y: auto;
+        transition: right var(--transition-speed) ease-in-out; /* Slide transition */
+    }
+    .main-nav.active {
+        right: 0; /* Slide in */
+    }
+    .main-nav ul {
+        flex-direction: column; /* Stack links vertically */
+        align-items: flex-start; /* Align text to left */
+        padding: 0 30px; /* Inner padding for menu items */
+        gap: 0; /* Remove gap for stacked links */
+    }
+    .main-nav li {
+        width: 100%;
+        margin-bottom: 20px; /* More space between mobile items */
+        border-bottom: 1px solid var(--border-color); /* Separator for mobile menu items */
+        padding-bottom: 15px;
+        text-align: left;
+    }
+    .main-nav li:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    .main-nav a {
+        padding: 12px 0; /* Larger padding for mobile links */
+        font-size: 1.2em; /* Larger font for mobile menu items */
+        border-radius: 0; /* No border radius on mobile links */
+        background-color: transparent; /* No background on mobile links */
+        transform: none; /* No lift on mobile links */
+    }
+    .main-nav li.active a {
+        border-bottom: none; /* No active border for mobile */
+        background-color: transparent; /* No background for active on mobile */
+        box-shadow: none; /* No shadow for active on mobile */
+    }
+
+    /* Smaller screen general adjustments */
+    .header-content,
+    .main-content {
+        padding: 0 20px;
+    }
+    .hamburger-menu {
+        width: 30px;
+        height: 20px;
+    }
+    .hamburger-menu.active span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger-menu.active span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+    .ranking-item {
+        padding: 18px 22px;
+    }
+    .ranking-item .rank-circle {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1em;
+        margin-right: 20px;
+    }
+    .ranking-item .user-info h3 {
+        font-size: 1.1em;
+    }
+    .ranking-item .user-info p {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content,
+    .main-content {
+        padding: 0 15px;
+    }
+    header h1 {
+        font-size: 2.2em; /* Even smaller title for very small mobiles */
+    }
+    .hamburger-menu {
+        width: 28px;
+        height: 18px;
+    }
+    .hamburger-menu.active span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger-menu.active span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+    .ranking-item {
+        padding: 15px 18px;
+    }
+    .ranking-item .rank-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 1em;
+        margin-right: 15px;
+    }
+    .ranking-item .user-info h3 {
+        font-size: 1em;
+    }
+    .ranking-item .user-info p {
+        font-size: 0.85em;
+    }
+    .main-nav {
+        width: 90%;
+    }
+    .main-nav ul {
+        padding: 0 20px;
+    }
+    .main-nav a {
+        font-size: 1.1em;
+    }
+}

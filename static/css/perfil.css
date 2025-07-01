@@ -1,0 +1,30 @@
+.perfil-info-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 30px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.perfil-info-card h2 {
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.perfil-info-card p {
+    margin: 8px 0;
+}
+
+.logout-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #d9534f;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}

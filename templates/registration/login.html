@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="form-wrapper sing-in">
+            <form action="." method="post">
+                {% csrf_token %}
+                <h2>Login</h2>
+                <div class="input-group">
+                    <input type="text" name="username" required>
+                    <label for="username">Usuário</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" name="password" required>
+                    <label for="password">Senha</label>
+                </div>
+                <!-- 
+                <div class="remember">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Lembrar-me</label>
+                </div> -->
+
+                <button type="submit">Entrar</button>
+                <div class="signup-link">
+                    <p>Não tem uma conta? <a href="{% url 'sing_view' %}">Registrar</a></p>
+                </div>
+
+
+            </form>
+        </div>
+        
+    </div>
+</body>
+</html>

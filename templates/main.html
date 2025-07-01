@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Indique & Ganhe</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="{% static 'img/2_sem.png'%}" alt="">
+      Indique & <span class="highlight">Ganhe</span></div>
+    <button class="hamburger-menu" aria-label="Abrir menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <nav class="main-nav">
+      <a href="#indicar">Indicar Carro</a>
+      <a href="#como-funciona">Como Funciona</a>
+      <a href="#ranking">Ranking</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a href="{% url 'sing_view' %}" class="btn-cadastrar">Cadastrar</a>
+  </header>
+
+  <main>
+    <div class="card" id="indicar">
+      <div class="icon-wrapper"><i class="fas fa-car"></i></div>
+      <div class="text">
+        <h3>Indique um Carro</h3>
+        <p>Indique para comprar, trocar ou alugar e ganhe bônus!</p>
+      </div>
+      <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="card" id="como-funciona">
+      <div class="icon-wrapper"><i class="fas fa-info-circle"></i></div>
+      <div class="text">
+        <h3>Como Funciona</h3>
+        <p>Você indica, ele aluga/vende, você recebe!</p>
+      </div>
+      <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="card" id="ranking">
+      <div class="icon-wrapper"><i class="fas fa-trophy"></i></div>
+      <div class="text">
+        <h3>Ranking de Indicações</h3>
+        <p>Confira os melhores indicadores</p>
+      </div>
+      <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="card" id="contato">
+      <div class="icon-wrapper"><i class="fas fa-envelope"></i></div>
+      <div class="text">
+        <h3>Contato</h3>
+        <p>Fale conosco para dúvidas ou suporte</p>
+      </div>
+      <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Indique & Ganhe • Todos os direitos reservados
+  </footer>
+
+  <script src="https://kit.fontawesome.com/a2e8f9c992.js" crossorigin="anonymous"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.querySelector('.hamburger-menu');
+      const nav = document.querySelector('.main-nav');
+      btn.addEventListener('click', () => nav.classList.toggle('active'));
+
+      document.querySelectorAll('.main-nav a').forEach(a => {
+        a.addEventListener('click', e => {
+          nav.classList.remove('active');
+          const id = a.getAttribute('href').substring(1);
+          if (id && document.getElementById(id)) {
+            e.preventDefault();
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

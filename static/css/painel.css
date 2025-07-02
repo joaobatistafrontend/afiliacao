@@ -775,24 +775,22 @@ footer {
 body.no-scroll {
     overflow: hidden;
 }
-.input-solicitar {
-    padding: 12px 15px;
-    background-color: #001F3F;
+.download-qr-btn {
+    background: var(--primary-color);
+    color: var(--bg-header-footer);
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    transition: background 0.2s, color 0.2s;
+    margin-top: 4px;
+}
+.download-qr-btn:hover {
+    background: var(--button-copy-hover);
     color: #fff;
-    border: 1px solid #FFC300; /* --primary-color */
-    border-radius: 12px;
-    font-size: 1rem;
-    width: 100%;
-    outline: none;
-    transition: 0.3s ease;
-}
-
-.input-solicitar:focus {
-    border-color: #28A745; /* --accent-color */
-    box-shadow: 0 0 5px #28A745;
-}
-
-.input-solicitar::placeholder {
-    color: #B0B0B0; /* --text-secondary */
-    font-style: italic;
 }

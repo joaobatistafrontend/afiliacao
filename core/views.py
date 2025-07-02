@@ -35,6 +35,7 @@ class PainelView(LoginRequiredMixin, View):
             'my_recs': profile.get_recommended_profile(),
             'ref_code': profile.code,
             'ponts': str(profile.ponts),
+            'qrcode': profile.qr,
             'form': form,
         }
         return render(request, self.template_name, context)

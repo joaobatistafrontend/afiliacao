@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from .utils import generate_ref_code, gerar_qrcode_sobre_imagem
 from django.db.models import Count
+from django.core.files import File
 
 class StatusClinete(models.Model):
     status = models.CharField(max_length=60, blank=True, null=True, help_text='Status do usuário')
@@ -30,7 +31,7 @@ class UserProfile(models.Model):
     lead_origin = models.IntegerField(default=1, help_text='Lead de Origin', blank=True, null=True)
     objservacao = models.CharField(max_length=125, blank=True, null=True, help_text='Observações')
     unit_id = models.IntegerField(default=1, help_text='Unidade Id', blank=True, null=True)
-
+    qr = models.ImageField(upload_to='qr/', blank=True, null=True, help_text='QR gerado do usuário')
 
     def __str__(self):
         return (f'{self.user.username} - {self.code}')
@@ -74,10 +75,13 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
         if self.code == '':
             self.code = generate_ref_code()
-            
-        url = f"https://http://127.0.0.1:8000/{self.code}"
-        caminho = 'static\img\qr.png'
-        gerar_qrcode_sobre_imagem(url, self.code, caminho)
+        url = f"https://127.0.0.1:8000/{self.code}"
+        caminho_fundo = 'static\img\qr.png'
+        caminho_saida = f'media/qr/qr_{self.code}.png'
+        from .utils import gerar_qrcode_sobre_imagem
+        gerar_qrcode_sobre_imagem(url, self.code, caminho_fundo, caminho_saida)
+        with open(caminho_saida, 'rb') as img_file:
+            self.qr.save(f'qr_{self.code}.png', File(img_file), save=False)
         super().save(*args, **kwargs)
 
 

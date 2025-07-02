@@ -1,5 +1,8 @@
 import uuid
 from requests import post
+import qrcode
+from PIL import Image
+import os
 API_URL = "https://api.chatgoon.com.br/api/messages/send"
 TOKEN = "0fc6d24b-04d6-4158-8caf-57b5411de484"
 
@@ -29,11 +32,8 @@ def enviar_mensagem(numeros, mensagem):
             except Exception as e:
                 print(f"❌ Erro ao enviar para {numero}: {e}")
 
-import qrcode
-from PIL import Image
-import os
 
-def gerar_qrcode_sobre_imagem(url, user, caminho_fundo):
+def gerar_qrcode_sobre_imagem(url, user, caminho_fundo, caminho_saida):
     if not os.path.exists(caminho_fundo):
         fundo = Image.new("RGB", (500, 500), color="white")
         fundo.save(caminho_fundo)
@@ -47,19 +47,12 @@ def gerar_qrcode_sobre_imagem(url, user, caminho_fundo):
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
 
-    # Abre a imagem de fundo
     bg = Image.open(caminho_fundo).convert("RGB")
+    qr_img = qr_img.resize((330, 330))
 
-    # Redimensiona o QR se necessário
-    qr_img = qr_img.resize((330,330))
-
-    # Define a posição (por ex. centro ou canto)
-    x = bg.width - qr_img.width - 370  # 10px de margem
+    x = bg.width - qr_img.width - 370
     y = bg.height - qr_img.height - 200
 
-    # Cola o QR na imagem de fundo
     bg.paste(qr_img, (x, y))
-
-    # Salva com o nome por usuário
-    bg.save(f"img.png")
-    bg.save(f"media/qr/bg_with_qr_{user}.png")
+    bg.save(caminho_saida)  # Salva só no caminho final
+    return caminho_saida

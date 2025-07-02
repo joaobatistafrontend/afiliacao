@@ -6,13 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Concessionária DriveFlow</title>
     <link rel="stylesheet" href="{% static 'css/painel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/painel2.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .input-solicitar {padding: 12px 15px; background-color: #001F3F; color: #fff; border: 1px solid var(--primary-color); border-radius: 12px; font-size: 1rem;    width: 100%;outline: none; transition: 0.3s ease;}
-        .input-solicitar:focus {border-color: var(--accent-color); box-shadow: 0 0 5px var(--accent-color);}
-        .input-solicitar::placeholder { color: var(--text-secondary); font-style: italic;}
-    </style>
 </head>
 <body>
     <header>
@@ -166,23 +162,14 @@
                     </form>
                 </div>
                 
-                <div class="card share-earn" id="indique-ganhe">
-                    <h3>Indique e Ganhe!</h3>
-                    <p>Compartilhe nosso link exclusivo e receba recompensas por cada venda.</p>
-                    <div class="share-options">
-                        <div class="share-item">
-                            <i class="fas fa-share-alt"></i>
-                            <span>Compartilhamento Fácil</span>
-                        </div>
-                        <div class="share-item">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span>Recompensas Exclusivas</span>
-                        </div>
-                    </div>
-                    <button class="share-link-button" data-link="{{ request.scheme }}://{{ request.get_host }}/{{ ref_code }}">
+                <div class="card share-earn">
+                    <h3>Indique com seu QR CODE exclusivo!</h3>
+                    <img src="{{ qrcode.url }}" style="max-width:160px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.12); margin-bottom:10px;">
+                    <button class="share-link-button" id="download-qr-btn">
                         <i class="fas fa-copy"></i>
-                        Copiar Link de Indicação
+                        baixe sua arte
                     </button>
+                    
                 </div>
 
 
@@ -192,7 +179,16 @@
     <footer>
         <p>&copy; 2025 DriveFlow. Todos os direitos reservados.</p>
     </footer>
-    
+    <script>
+        document.getElementById('download-qr-btn').addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.href = "{{ qrcode.url }}";
+            link.download = "qr_{{ request.user.username }}.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+        </script>
     <script src="{% static 'js/perfil.js' %}"></script>
 
 </body>

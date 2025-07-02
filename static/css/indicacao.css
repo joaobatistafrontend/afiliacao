@@ -188,8 +188,9 @@ header h1:hover {
 
 .main-nav a:hover {
     color: var(--text-light);
-    background-color: #FFD700; /* More noticeable hover background */
+    color: #FFD700; /* More noticeable hover background */
     transform: translateY(-2px); /* Slight lift on hover */
+    
 }
 
 .main-nav li.active a {
@@ -350,7 +351,7 @@ main {
         justify-content: center; /* Center the title on desktop */
         margin-bottom: 20px; /* Space between title and nav */
     }
-    header h1 {
+    .header h1 {
         /* No specific overrides here, inherits from base */
     }
     .header-right {

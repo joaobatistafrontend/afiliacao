@@ -11,20 +11,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Abrir menu" style="display: none;">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
     <header>
         <div class="logo">DRIVE<span class="highlight">FLOW</span></div>
-        <button class="hamburger-menu" aria-label="Abrir Menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-        <nav class="main-nav">
+        <!-- <nav class="main-nav">
             <ul>
                 <li><a href="{% url 'indicacao_view' %}">Minhas Indicações</a></li>
                 <li><a href="{% url 'ranking_view' %}">Ranking de Indicações</a></li>
                 <li><a href="{% url 'perfil_view' %}">Meus Dados</a></li>
-                <li>
-                    <form method="post" action="{% url 'logout' %}" style="margin: 0; padding: 0;">
+                
+                <li><a href="#suporte-exclusivo">Suporte Exclusivo</a></li>
+                <li><a href="#seu-saldo">Seu Saldo</a></li>
+            </ul>
+        </nav> -->
+
+
+        <nav class="main-nav">
+            <ul>
+                <!-- <li><a href="{% url 'painel_view' %}">Painel</a></li> -->
+                <li><a href="#suporte-exclusivo">Suporte Exclusivo</a></li>
+                <li><a href="#seu-saldo">Seu Saldo</a></li>
+                <li><a href="#seu-qr">Seu QR Indica</a></li>
+                <li class="active"><a href="{% url 'indicacao_view' %}">Minhas indicações</a></li>
+                <li><a href="{% url 'ranking_view' %}">Ranking de Indicações</a></li>
+                <li><a href="{% url 'perfil_view' %}">Meus dados</a></li>
+                <li><form method="post" action="{% url 'logout' %}" style="margin: 0; padding: 0;">
                         {% csrf_token %}
                         <button type="submit" style="
                             all: unset; display: block; width: 100%; padding: 15px 10px; font-size: 1em; color: var(--text-light); text-align: left; cursor: pointer;" onmouseover="this.style.backgroundColor='rgba(var(--primary-color), 0.1)'"onmouseout="this.style.backgroundColor='transparent'">
@@ -32,8 +47,6 @@
                         </button>
                     </form>
                 </li>
-                <li><a href="#suporte-exclusivo">Suporte Exclusivo</a></li>
-                <li><a href="#seu-saldo">Seu Saldo</a></li>
             </ul>
         </nav>
     </header>
@@ -130,6 +143,16 @@
                         Copiar Link de Indicação
                     </button>
                 </div>
+                
+                <div class="card share-earn" id="seu-qr">
+                    <h3>Indique com seu QR CODE exclusivo!</h3>
+                    <img src="{{ qrcode.url }}" style="max-width:160px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.12); margin-bottom:10px;">
+                    <button class="share-link-button" id="download-qr-btn">
+                        <i class="fas fa-copy"></i>
+                        baixe sua arte
+                    </button>
+                    
+                </div>
 
                 <div class="card balance" id="seu-saldo">
                     <div class="header">
@@ -162,15 +185,7 @@
                     </form>
                 </div>
                 
-                <div class="card share-earn">
-                    <h3>Indique com seu QR CODE exclusivo!</h3>
-                    <img src="{{ qrcode.url }}" style="max-width:160px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.12); margin-bottom:10px;">
-                    <button class="share-link-button" id="download-qr-btn">
-                        <i class="fas fa-copy"></i>
-                        baixe sua arte
-                    </button>
-                    
-                </div>
+                
 
 
             </section>
@@ -179,17 +194,6 @@
     <footer>
         <p>&copy; 2025 DriveFlow. Todos os direitos reservados.</p>
     </footer>
-    <script>
-        document.getElementById('download-qr-btn').addEventListener('click', function() {
-            const link = document.createElement('a');
-            link.href = "{{ qrcode.url }}";
-            link.download = "qr_{{ request.user.username }}.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-        </script>
-    <script src="{% static 'js/perfil.js' %}"></script>
-
+    <script src="{% static 'js/painel.js' %}"></script>
 </body>
 </html>

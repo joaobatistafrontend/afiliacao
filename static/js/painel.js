@@ -21,3 +21,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+
+
+document.getElementById('download-qr-btn').addEventListener('click', function() {
+    const link = document.createElement('a');
+    link.href = "{{ qrcode.url }}";
+    link.download = "qr_{{ request.user.username }}.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+// Exibe o hamburger no mobile
+function toggleMenu() {
+    document.querySelector('.main-nav').classList.toggle('active');
+    document.getElementById('hamburger-menu').classList.toggle('active');
+    document.body.classList.toggle('no-scroll');
+}
+document.getElementById('hamburger-menu').addEventListener('click', toggleMenu);
+
+// Fecha o menu ao clicar em um link (opcional)
+document.querySelectorAll('.main-nav a').forEach(link => {
+    link.addEventListener('click', function() {
+        document.querySelector('.main-nav').classList.remove('active');
+        document.getElementById('hamburger-menu').classList.remove('active');
+        document.body.classList.remove('no-scroll');
+    });
+});
+
+// Mostra o hamburger só em telas pequenas
+function checkHamburger() {
+    if(window.innerWidth <= 991) {
+        document.getElementById('hamburger-menu').style.display = 'flex';
+    } else {
+        document.getElementById('hamburger-menu').style.display = 'none';
+        document.querySelector('.main-nav').classList.remove('active');
+        document.getElementById('hamburger-menu').classList.remove('active');
+        document.body.classList.remove('no-scroll');
+    }
+}
+window.addEventListener('resize', checkHamburger);
+window.addEventListener('DOMContentLoaded', checkHamburger);

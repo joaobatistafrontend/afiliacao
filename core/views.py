@@ -9,7 +9,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .forms import *
 from .utils import enviar_mensagem
-# Create your views here.
 from django.db.models import F
 
 class PerfilView(LoginRequiredMixin, TemplateView):
@@ -20,9 +19,6 @@ class PerfilView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(UserProfile, user=self.request.user)
         context['my_recs'] = profile.get_recommended_profile()
-        context['user'] = self.request.user
-        context['ponts'] = str(profile.ponts)
-        context['status'] = profile.status
         return context
 
 class PainelView(LoginRequiredMixin, View):
@@ -66,9 +62,11 @@ class PainelView(LoginRequiredMixin, View):
                 if finaceiro_aleatorio:
                     enviar_mensagem([finaceiro_aleatorio.responsavel.userprofile.whatsapp], MENSAGEM)
 
-            return redirect('painel_view')            
+            return redirect('painel_view')
+        else:
+            return render(request, 'home/painel.html', {'form': form})
+
             
-        return redirect('painel_view')
 
 class RankingView(LoginRequiredMixin, TemplateView):
     template_name = 'home/ranking.html'
@@ -102,69 +100,70 @@ class IndicacaoView(LoginRequiredMixin, ListView):
 #     return render(request, 'profiles/main.html', context)
 
 
+class SignUpView(View):
+    template_name = 'registration/singup.html'
+    form_class = SignUpForm
 
-def singup_view(request, *args, **kwargs):
-    code = str(kwargs.get('ref_code'))
-    profile_id = request.session.get('recomended_by', None)
-    # print('profile_id:', profile_id)
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
 
-    form = SignUpForm(request.POST or None)
-    if form.is_valid():
-        instance = form.save()  # instance = novo usuário (User)
+    def post(self, request, *args, **kwargs):
+        code = str(kwargs.get('ref_code'))
+        profile_id = request.session.get('recomended_by', None)
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            instance = form.save()
+            user_profile = UserProfile.objects.get(user=instance)
+            #ultimo vendedor que pegou a venda
+            vendedor = Vendedora.objects.order_by('last_notified').first()
+            # se veio código de recomendação, adicione
+            if profile_id is not None:
+                try:
+                    recommended_by_profile = UserProfile.objects.get(id=profile_id)
+                    recommended_by_profile.save()
+                    user_profile.recomended_by = recommended_by_profile.user
+                    user_profile.save()
+                    MENSAGEM = (
+                        f"🎉 *Novo usuário cadastrado!*\n\n"
+                        f"👤 *Usuário:* {instance.get_full_name() or instance.username}\n"
+                        f"📧 *Email:* {instance.email}\n"
+                        f"📱 *WhatsApp:* {user_profile.whatsapp}\n"
+                        f"🔗 *Código de Indicação:* {recommended_by_profile.code}\n"
+                        f"🙋‍♂️ *Indicado por:* {recommended_by_profile.user.get_full_name() or recommended_by_profile.user.username}\n"
+                        f"🗓️ *Data de Cadastro:* {instance.date_joined.strftime('%d/%m/%Y')}\n"
+                    )
+                    vendedor_indicador = Vendedora.objects.filter(user=recommended_by_profile.user).first()
+                    if vendedor_indicador:
+                        # Notifica diretamente o vendedor que indicou
+                        enviar_mensagem([vendedor_indicador.user.userprofile.whatsapp], MENSAGEM)
+                        # Atualize o campo last_notified para agora
+                        vendedor_indicador.last_notified = timezone.now()
+                        vendedor_indicador.save()
+                    elif vendedor:
+                        enviar_mensagem([vendedor.user.userprofile.whatsapp], MENSAGEM)
+                        vendedor.last_notified = timezone.now()
+                        vendedor.save()
+                except UserProfile.DoesNotExist:
+                    pass
 
-        # buscar ou garantir o perfil do usuário criado
-        user_profile = UserProfile.objects.get(user=instance)
-        vendedor = Vendedora.objects.order_by('last_notified').first()
-        
-        # se veio código de recomendação, adicione
-        if profile_id is not None:
-            try:
-                recommended_by_profile = UserProfile.objects.get(id=profile_id)
-                recommended_by_profile.save()
-                user_profile.recomended_by = recommended_by_profile.user
-                user_profile.save()
-                MENSAGEM = (
-                    f"🎉 *Novo usuário cadastrado!*\n\n"
-                    f"👤 *Usuário:* {instance.get_full_name() or instance.username}\n"
-                    f"📧 *Email:* {instance.email}\n"
-                    f"📱 *WhatsApp:* {user_profile.whatsapp}\n"
-                    f"🔗 *Código de Indicação:* {recommended_by_profile.code}\n"
-                    f"🙋‍♂️ *Indicado por:* {recommended_by_profile.user.get_full_name() or recommended_by_profile.user.username}\n"
-                    f"🗓️ *Data de Cadastro:* {instance.date_joined.strftime('%d/%m/%Y')}\n"
-                )
-                vendedor_indicador = Vendedora.objects.filter(user=recommended_by_profile.user).first()
-                if vendedor_indicador:
-                    # Notifica diretamente o vendedor que indicou
-                    enviar_mensagem([vendedor_indicador.user.userprofile.whatsapp], MENSAGEM)
-                    vendedor_indicador.last_notified = timezone.now()
-                    vendedor_indicador.save()
-                elif vendedor:
-                    # Notifica o próximo da fila
-                    enviar_mensagem([vendedor_indicador.user.userprofile.whatsapp], MENSAGEM)
-                    # Atualize o campo last_notified para agora
-                    vendedor.last_notified = timezone.now()
-                    vendedor.save()
-            except UserProfile.DoesNotExist:
-                pass  # ou faça alguma ação alternativa
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            if user:
+                login(request, user)
+            return redirect('painel_view')
 
-        # autenticar e logar
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-        user = authenticate(username=username, password=password)
-        if user:
-            login(request, user)
+        return render(request, self.template_name, {'form': form})
 
-        return redirect('painel_view')
 
-    return render(request, 'registration/singup.html', {'form': form})
-
-def main_view(request, *args, **kwargs):
-    code = str(kwargs.get('ref_code'))
-    try:
-       profile = UserProfile.objects.get(code=code)
-       request.session['recomended_by'] = profile.id
-       print('id:', profile.id)
-    except:
-        pass
+def main_view(request, ref_code=None, *args, **kwargs):
+    if ref_code:
+        try:
+            profile = UserProfile.objects.get(code=ref_code)
+            request.session['recomended_by'] = profile.id
+            print('id:', profile.id)
+        except UserProfile.DoesNotExist:
+            pass
     print(request.session.get_expiry_date())
     return render(request, 'main.html')

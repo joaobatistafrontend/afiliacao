@@ -4,27 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranking Project</title>
-    <link rel="stylesheet" href="{% static 'css/ranking.css' %}">
+    <title>Ranking | Evogard</title>
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Estilo Customizado -->
+    <link rel="stylesheet" href="{% static 'css/indicacao.css' %}">
 </head>
 <body>
+
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Abrir menu" style="display: none;">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+
     <div class="container">
         <header>
             <div class="header-content">
-                <div class="header-top">
-                    <h1>Ranking</h1>
-                    <div class="header-right">
-                        <button class="hamburger-menu" aria-label="Toggle navigation">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </button>
-                    </div>
+                <div class="indication-header">
+                    <h1><i class="fas fa-trophy"></i> Ranking</h1>
                 </div>
+                <div class="indication-summary">
+                    Veja quem mais está indicando!
                 </div>
+            </div>
         </header>
 
         <nav class="main-nav">
@@ -33,19 +42,25 @@
                 <li><a href="{% url 'indicacao_view' %}">Minhas indicações</a></li>
                 <li class="active"><a href="#">Ranking</a></li>
                 <li><a href="{% url 'perfil_view' %}">Meus dados</a></li>
-                <!-- <li><a href="#">Compartilhar</a></li> -->
             </ul>
         </nav>
 
         <main>
             <div class="main-content">
-                <div class="main-content" id="ranking-list">
+                <div class="indication-list">
                     {% for user in ranking %}
-                        <div class="ranking-item" data-name="{{ user.user}}" data-indications="{{ user.total|default:0 }}">
-                            <div class="user-info">
-                                <h3>{{ user.name  }}</h3>
-                                <p>{{ user.total|default:0 }} indicações</p>
+                        <div class="indication-card" data-name="{{ user.user }}" data-indications="{{ user.total|default:0 }}">
+                            <div class="indication-avatar">
+                                <i class="fas fa-user"></i>
                             </div>
+                            <div class="indication-info">
+                                <h3>{{ user.name }}</h3>
+                                <p>{{ user.total|default:0 }} indicaç{{ user.total|pluralize:"ão,ões" }}</p>
+                            </div>
+                            <span class="indication-badge">
+                                <i class="fas fa-trophy"></i>
+                                {{ user.total|default:"0" }}
+                            </span>
                         </div>
                     {% endfor %}
                 </div>
@@ -53,6 +68,37 @@
         </main>
     </div>
 
-    <script src="{% static 'js/ranking.js' %}"></script>
+    <script>
+        // Exibe o hamburger no mobile
+        function toggleMenu() {
+            document.querySelector('.main-nav').classList.toggle('active');
+            document.getElementById('hamburger-menu').classList.toggle('active');
+            document.body.classList.toggle('no-scroll');
+        }
+
+        document.getElementById('hamburger-menu').addEventListener('click', toggleMenu);
+
+        document.querySelectorAll('.main-nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelector('.main-nav').classList.remove('active');
+                document.getElementById('hamburger-menu').classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            });
+        });
+
+        function checkHamburger() {
+            if(window.innerWidth <= 991) {
+                document.getElementById('hamburger-menu').style.display = 'flex';
+            } else {
+                document.getElementById('hamburger-menu').style.display = 'none';
+                document.querySelector('.main-nav').classList.remove('active');
+                document.getElementById('hamburger-menu').classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
+        window.addEventListener('resize', checkHamburger);
+        window.addEventListener('DOMContentLoaded', checkHamburger);
+    </script>
 </body>
 </html>

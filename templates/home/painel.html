@@ -139,7 +139,7 @@
                         <h3>Seu Pontos Disponível</h3>
                     </div>
 
-                    <p class="balance-value">R$ {{ ponts }},00</p>
+                    <p class="balance-value">R$ {{ ponts }}</p>
 
                     <form method="post" novalidate style="width: 100%; margin-top: 20px;">
                         {% csrf_token %}
@@ -147,10 +147,10 @@
                             <div style="display: flex; flex-direction: column;">
                                 <label for="{{ form.valor.id_for_label }}" style="margin-bottom: 5px; font-weight: 500; border-radius: 15px;">Informe o valor</label>
                                 {{ form.valor }}
-                                {% if form.valor.errors %}
-                                    <div style="color: #FF5733; font-size: 0.85em; margin-top: 4px;">
-                                        {{ form.valor.errors.as_text|safe }}
-                                    </div>
+                                    {% if form.valor.errors %}
+                                        <div style="color: #FF5733; font-size: 0.85em; margin-top: 4px;">
+                                            {{ form.valor.errors.0 }}
+                                        </div>
                                 {% endif %}
                             </div>
 

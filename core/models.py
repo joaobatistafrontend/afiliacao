@@ -19,7 +19,8 @@ class Planos(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    code = models.CharField(max_length=12, blank=True, help_text='codigo para compartilhar')
+    email = models.CharField(max_length=80, blank=True, null=True, help_text='email')
+    code = models.CharField(max_length=12, blank=True, help_text='Código para compartilhar')
     recomended_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='ref_by')
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -32,6 +33,8 @@ class UserProfile(models.Model):
     objservacao = models.CharField(max_length=125, blank=True, null=True, help_text='Observações')
     unit_id = models.IntegerField(default=1, help_text='Unidade Id', blank=True, null=True)
     qr = models.ImageField(upload_to='qr/', blank=True, null=True, help_text='QR gerado do usuário')
+    chave_pix = models.CharField(max_length=80, blank=True, null=True, help_text='Chave pix')
+    banco = models.CharField(max_length=80, blank=True, null=True, help_text='Banco da chave Pix')
 
     def __str__(self):
         return (f'{self.user.username} - {self.code}')

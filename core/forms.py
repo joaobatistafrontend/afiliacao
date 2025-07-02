@@ -6,6 +6,8 @@ from .models import UserProfile
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class':'input-field'}))
     whatsapp = forms.CharField(required=True, widget=forms.TextInput(attrs={'class':'input-field'}))
+    chave_pix = forms.CharField(required=True, widget=forms.TextInput(attrs={'class':'input-field'}))
+    banco = forms.CharField(required=True, widget=forms.TextInput(attrs={'class':'input-field'}))
 
     class Meta:
         model = User
@@ -18,6 +20,10 @@ class SignUpForm(UserCreationForm):
         # Create or update profile
         profile, _ = UserProfile.objects.get_or_create(user=user)
         profile.whatsapp = self.cleaned_data['whatsapp']
+        profile.chave_pix = self.cleaned_data['chave_pix']
+        profile.banco = self.cleaned_data['banco']
+        profile.email = self.cleaned_data['email']
+
         if ref_code:
             # atribuir recomendador via código
             try:

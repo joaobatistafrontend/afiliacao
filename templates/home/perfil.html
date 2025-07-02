@@ -5,23 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Perfil</title>
-    <link rel="stylesheet" href="{% static 'css/ranking.css' %}">
+    <link rel="stylesheet" href="{% static 'css/indicacao.css' %}"> <!-- Usando o CSS unificado -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <button class="hamburger-menu" id="hamburger-menu" aria-label="Abrir menu" style="display: none;">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+
     <div class="container">
         <header>
             <div class="header-content">
                 <div class="header-top">
-                    <h1>Meu Perfil</h1>
-                    <div class="header-right">
-                        <button class="hamburger-menu" aria-label="Toggle navigation">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </button>
-                    </div>
+                    <h1><i class="fas fa-user-circle"></i> Meu Perfil</h1>
                 </div>
             </div>
         </header>
@@ -37,28 +36,63 @@
 
         <main>
             <div class="main-content">
-                <div class="perfil-info-card">
-                    <h2>{{ user.get_full_name|default:user.username }}</h2>
-                    <p><strong>Usuário:</strong> {{ user.username }}</p>
-                    <p><strong>Status:</strong> {{ status }}</p>
-                    <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>Data de Cadastro:</strong> {{ user.userprofile.created|date:"d/m/Y" }}</p>
-                    <p><strong>Código de Indicação:</strong> {{ user.userprofile.code }}</p>
-                    {% if user.userprofile.recomended_by %}
-                        <p><strong>Indicado por:</strong> {{ user.userprofile.recomended_by.username }}</p>
-                    {% else %}
-                        <p><strong>Indicado por:</strong> Nenhum</p>
-                    {% endif %}
-                    <p><strong>WhatsApp:</strong> {{ user.userprofile.whatsapp }}</p>
-                    <p><strong>Chave Pix:</strong> 85986654154</p>
-                    <a href="{% url 'logout' %}" class="logout-link">
-                        <i class="fas fa-sign-out-alt"></i> Sair da Conta
-                    </a>
+                <div class="perfil-info-card indication-card">
+                    <div class="indication-info">
+                        <h3>{{ user.get_full_name|default:user.username }}</h3>
+                        <p><strong>Usuário:</strong> {{ user.username }}</p>
+                        {% if user.userprofile.email %}<p><strong>Email:</strong> {{ user.userprofile.email }}</p>{% endif %}
+                        {% if user.userprofile.status %}<p><strong>Status:</strong> {{ user.userprofile.status }}</p>{% endif %}
+                        <p><strong>Data de Cadastro:</strong> {{ user.userprofile.created|date:"d/m/Y" }}</p>
+                        <p><strong>Código de Indicação:</strong> {{ user.userprofile.code }}</p>
+                        {% if user.userprofile.recomended_by %}
+                            <p><strong>Indicado por:</strong> {{ user.userprofile.recomended_by.username }}</p>
+                        {% else %}
+                            <p><strong>Indicado por:</strong> Nenhum</p>
+                        {% endif %}
+                        {% if user.userprofile.whatsapp %}<p><strong>WhatsApp:</strong> {{ user.userprofile.whatsapp }}</p>{% endif %}
+                        <p><strong>Chave Pix:</strong>
+                            {% if user.userprofile.chave_pix %}{{ user.userprofile.chave_pix }} -{% endif %}
+                            {% if user.userprofile.banco %} {{ user.userprofile.banco }}{% endif %}
+                        </p>
+                        <a href="{% url 'logout' %}" class="logout-link">
+                            <i class="fas fa-sign-out-alt"></i> Sair da Conta
+                        </a>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <script src="{% static 'js/perfil.js' %}"></script>
+    <script>
+        function toggleMenu() {
+            document.querySelector('.main-nav').classList.toggle('active');
+            document.getElementById('hamburger-menu').classList.toggle('active');
+            document.body.classList.toggle('no-scroll');
+        }
+
+        document.getElementById('hamburger-menu').addEventListener('click', toggleMenu);
+
+        document.querySelectorAll('.main-nav a').forEach(link => {
+            link.addEventListener('click', function () {
+                document.querySelector('.main-nav').classList.remove('active');
+                document.getElementById('hamburger-menu').classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            });
+        });
+
+        function checkHamburger() {
+            if (window.innerWidth <= 991) {
+                document.getElementById('hamburger-menu').style.display = 'flex';
+            } else {
+                document.getElementById('hamburger-menu').style.display = 'none';
+                document.querySelector('.main-nav').classList.remove('active');
+                document.getElementById('hamburger-menu').classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
+        window.addEventListener('resize', checkHamburger);
+        window.addEventListener('DOMContentLoaded', checkHamburger);
+    </script>
 </body>
 </html>

@@ -52,6 +52,8 @@
                             <p><strong>Indicado por:</strong> Nenhum</p>
                         {% endif %}
                         {% if user.userprofile.whatsapp %}<p><strong>WhatsApp:</strong> {{ user.userprofile.whatsapp }}</p>{% endif %}
+                        {% if user.userprofile.whatsapp %}<p><strong>Carro:</strong> {{ user.userprofile.ano_carro }}{% endif %} - {% if user.userprofile.modelo %}{{ user.userprofile.modelo }}{% endif %}</p>
+                        
                         <p><strong>Chave Pix:</strong>
                             {% if user.userprofile.chave_pix %}{{ user.userprofile.chave_pix }} -{% endif %}
                             {% if user.userprofile.banco %} {{ user.userprofile.banco }}{% endif %}

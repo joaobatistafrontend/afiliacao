@@ -26,7 +26,7 @@ class UserProfile(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     ponts = models.IntegerField(default=0, help_text='Pontos acumulados pelo usuário', blank=True, null=True)
     whatsapp = models.CharField(max_length=15, blank=True, null=True, help_text='Número de WhatsApp do usuário')
-    ano_carro = models.IntegerField(default=0, help_text='Ano do carro do usuário', blank=True, null=True)
+    ano_carro = models.CharField(max_length=6, help_text='Ano do carro do usuário', blank=True, null=True)
     modelo = models.CharField(max_length=60, blank=True, help_text='Modelo do carro do usario')
 
     status = models.ForeignKey(StatusClinete, on_delete=models.CASCADE, blank=True, null=True, help_text='Status do usuário')

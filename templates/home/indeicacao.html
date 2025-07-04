@@ -32,8 +32,10 @@
         <nav class="main-nav">
             <ul>
                 <li><a href="{% url 'painel_view' %}">Painel</a></li>
-                <li class="active"><a href="#">Minhas indicações</a></li>
-                <li><a href="{% url 'ranking_view' %}">Ranking</a></li>
+                {% if is_vendedor %}
+                    <li class="active"><a href="#">Minhas indicações</a></li>
+                    <li><a href="{% url 'ranking_view' %}">Ranking</a></li>
+                {% endif %}
                 <li><a href="{% url 'perfil_view' %}">Meus dados</a></li>
             </ul>
         </nav>

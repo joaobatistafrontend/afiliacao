@@ -28,6 +28,21 @@ class PainelView(LoginRequiredMixin, View):
         profile = get_object_or_404(UserProfile, user=request.user)
         is_vendedor = Vendedora.objects.filter(user=profile.user).exists()
         form = SolicitarSaldoForm(saldo_disponivel=profile.ponts)
+        vendedor = Vendedora.objects.order_by('last_notified').first()
+        indicador = None
+        zap_indicador = None
+    
+        # Busca o perfil do indicador (quem indicou o usuário atual)
+        if profile.recomended_by:
+            try:
+                indicador = UserProfile.objects.get(user=profile.recomended_by)
+                zap_indicador = indicador.whatsapp
+            except UserProfile.DoesNotExist:
+                zap_indicador = None
+        else:
+            zap_indicador = vendedor.user.userprofile.whatsapp
+                
+    
         context = {
             'my_recs': profile.get_recommended_profile(),
             'ref_code': profile.code,
@@ -35,6 +50,7 @@ class PainelView(LoginRequiredMixin, View):
             'qrcode': profile.qr,
             'form': form,
             'is_vendedor': is_vendedor,
+            'zap_indicador': zap_indicador,
         }
         return render(request, self.template_name, context)
 
@@ -52,6 +68,8 @@ class PainelView(LoginRequiredMixin, View):
                 f"👤 *Saldo em conta:* {profile.ponts if profile.ponts is not None else '---'}\n"
                 f"📧 *Email:* {profile.user.email or '---'}\n"
                 f"📱 *WhatsApp:* {profile.whatsapp or '---'}\n"
+                f"🚗 *Modelo do carro:* {profile.modelo_carro or '---'}\n"
+                f"📅 *Ano do carro:* {profile.ano_carro or '---'}\n"
                 f"🔗 *Código de Indicação:* {profile.code or '---'}\n"
                 f"🙋‍♂️ *Indicado por:* "
                     f"{profile.recomended_by.get_full_name() if profile.recomended_by else '---'}\n"
@@ -96,15 +114,6 @@ class IndicacaoView(LoginRequiredMixin, ListView):
         context['my_recs'] = profile.get_recommended_profile()
         return context
 
-# def my_recommendations_view(request, *args, **kwargs):
-#     profile = UserProfile.objects.get(user=request.user)
-#     my_recs = profile.get_recommended_profile()
-#     context = {
-#         'my_recs': my_recs,
-#     }
-    
-#     return render(request, 'profiles/main.html', context)
-
 
 class SignUpView(View):
     template_name = 'registration/singup.html'
@@ -115,15 +124,13 @@ class SignUpView(View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        code = str(kwargs.get('ref_code'))
         profile_id = request.session.get('recomended_by', None)
         form = self.form_class(request.POST)
         if form.is_valid():
             instance = form.save()
             user_profile = UserProfile.objects.get(user=instance)
-            #ultimo vendedor que pegou a venda
             vendedor = Vendedora.objects.order_by('last_notified').first()
-            # se veio código de recomendação, adicione
+    
             if profile_id is not None:
                 try:
                     recommended_by_profile = UserProfile.objects.get(id=profile_id)
@@ -135,31 +142,48 @@ class SignUpView(View):
                         f"👤 *Usuário:* {instance.get_full_name() or instance.username}\n"
                         f"📧 *Email:* {instance.email}\n"
                         f"📱 *WhatsApp:* {user_profile.whatsapp}\n"
+                        f"🚗 *Modelo do carro:* {user_profile.modelo or '---'}\n"
+                        f"📅 *Ano do carro:* {user_profile.ano_carro or '---'}\n"
                         f"🔗 *Código de Indicação:* {recommended_by_profile.code}\n"
                         f"🙋‍♂️ *Indicado por:* {recommended_by_profile.user.get_full_name() or recommended_by_profile.user.username}\n"
                         f"🗓️ *Data de Cadastro:* {instance.date_joined.strftime('%d/%m/%Y')}\n"
                     )
                     vendedor_indicador = Vendedora.objects.filter(user=recommended_by_profile.user).first()
                     if vendedor_indicador:
-                        # Notifica diretamente o vendedor que indicou
                         enviar_mensagem([vendedor_indicador.user.userprofile.whatsapp], MENSAGEM)
-                        # Atualize o campo last_notified para agora
                         vendedor_indicador.last_notified = timezone.now()
                         vendedor_indicador.save()
-                    elif vendedor:
-                        enviar_mensagem([vendedor.user.userprofile.whatsapp], MENSAGEM)
-                        vendedor.last_notified = timezone.now()
-                        vendedor.save()
+                    # else:
+                    #     enviar_mensagem([vendedor.user.userprofile.whatsapp], MENSAGEM)
+                    #     vendedor.last_notified = timezone.now()
+                    #     vendedor.save()
                 except UserProfile.DoesNotExist:
                     pass
-
+            else:
+                # Não veio recomendação, envia mensagem para o último vendedor
+                MENSAGEM = (
+                    f"🎉 *Novo usuário cadastrado!*\n\n"
+                    f"👤 *Usuário:* {instance.get_full_name() or instance.username}\n"
+                    f"📧 *Email:* {instance.email}\n"
+                    f"📱 *WhatsApp:* {user_profile.whatsapp}\n"
+                    f"🚗 *Modelo do carro:* {user_profile.modelo or '---'}\n"
+                    f"📅 *Ano do carro:* {user_profile.ano_carro or '---'}\n"
+                    f"🔗 *Código de Indicação:* ---\n"
+                    f"🙋‍♂️ *Indicado por:* ---\n"
+                    f"🗓️ *Data de Cadastro:* {instance.date_joined.strftime('%d/%m/%Y')}\n"
+                )
+                if vendedor:
+                    enviar_mensagem([vendedor.user.userprofile.whatsapp], MENSAGEM)
+                    vendedor.last_notified = timezone.now()
+                    vendedor.save()
+    
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
             return redirect('painel_view')
-
+    
         return render(request, self.template_name, {'form': form})
 
 

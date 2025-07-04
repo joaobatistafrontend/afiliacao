@@ -35,9 +35,11 @@
                 <!-- <li><a href="{% url 'painel_view' %}">Painel</a></li> -->
                 <li><a href="#suporte-exclusivo">Suporte Exclusivo</a></li>
                 <li><a href="#seu-saldo">Seu Saldo</a></li>
-                <li><a href="#seu-qr">Seu QR Indica</a></li>
-                <li class="active"><a href="{% url 'indicacao_view' %}">Minhas indicações</a></li>
-                <li><a href="{% url 'ranking_view' %}">Ranking de Indicações</a></li>
+                {% if is_vendedor %}
+                    <li><a href="#seu-qr">Seu QR Indica</a></li>
+                    <li class="active"><a href="{% url 'indicacao_view' %}">Minhas indicações</a></li>
+                    <li><a href="{% url 'ranking_view' %}">Ranking de Indicações</a></li>
+                {% endif %}
                 <li><a href="{% url 'perfil_view' %}">Meus dados</a></li>
                 <li><form method="post" action="{% url 'logout' %}" style="margin: 0; padding: 0;">
                         {% csrf_token %}
@@ -53,30 +55,33 @@
     <main>
         <div class="main-columns-container">
             <section class="left-panel">
-                <a href="{% url 'indicacao_view' %}" style="text-decoration: none; color: inherit;">
-                    <div class="card menu-item" id="minhas-indicacoes">
-                        <div class="icon-wrapper">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="text">
-                            <h3>Minhas Indicações</h3>
-                            <p>Acompanhe suas indicações de vendas</p>
-                        </div>
-                        <i class="fas fa-chevron-right arrow"></i>
-                    </div>
-                </a>
-                <a href="{% url 'ranking_view' %}" style="text-decoration: none; color: inherit;">
+                {% if is_vendedor %}
 
-                    <div class="card menu-item" id="ranking">
-                        <div class="icon-wrapper">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="text">
-                            <h3>Ranking de Indicações</h3>
+                    <a href="{% url 'indicacao_view' %}" style="text-decoration: none; color: inherit;">
+                        <div class="card menu-item" id="minhas-indicacoes">
+                            <div class="icon-wrapper">
+                                <i class="fas fa-users"></i>
                             </div>
-                        <i class="fas fa-chevron-right arrow"></i>
-                    </div>
-                </a>
+                            <div class="text">
+                                <h3>Minhas Indicações</h3>
+                                <p>Acompanhe suas indicações de vendas</p>
+                            </div>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </div>
+                    </a>
+                    <a href="{% url 'ranking_view' %}" style="text-decoration: none; color: inherit;">
+
+                        <div class="card menu-item" id="ranking">
+                            <div class="icon-wrapper">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="text">
+                                <h3>Ranking de Indicações</h3>
+                                </div>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </div>
+                    </a>
+                {% endif %}
                 <a href="{% url 'perfil_view' %}" style="text-decoration: none; color: inherit;">
                     <div class="card menu-item" id="meus-dados">
                         <div class="icon-wrapper">
@@ -119,41 +124,12 @@
                             <p>Converse conosco via WhatsApp para atendimento rápido</p>
                         </div>
                     </div>
-                    <a href="https://wa.me/5585999999999?text=Ol%C3%A1,%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20DriveFlow%20e%20seus%20ve%C3%ADculos." target="_blank" class="whatsapp-button">
+                    <a href="https://wa.me/{{zap_indicador}}?text=Ol%C3%A1,%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20DriveFlow%20e%20seus%20ve%C3%ADculos." target="_blank" class="whatsapp-button">
                         Conversar
                         <i class="fas fa-external-link-alt"></i>
                     </a>
                 </div>
                 
-                <div class="card balance" id="seu-saldo">
-                    <div class="header">
-                        <div class="icon-wrapper">
-                            <i class="fas fa-car"></i>
-                        </div>
-                        <h3>Dados do Veiculo</h3>
-                    </div>
-                    <p class="balance-value">R$ {{ ponts }}</p>
-                    <form method="post" novalidate style="width: 100%; margin-top: 20px;">
-                        {% csrf_token %}
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="display: flex; flex-direction: column;">
-                                <label for="{{ form.valor.id_for_label }}" style="margin-bottom: 5px; font-weight: 500; border-radius: 15px;">Informe o valor</label>
-                                {{ form.valor }}
-                                    {% if form.valor.errors %}
-                                        <div style="color: #FF5733; font-size: 0.85em; margin-top: 4px;">
-                                            {{ form.valor.errors.0 }}
-                                        </div>
-                                {% endif %}
-                            </div>
-    
-                            <button type="submit"
-                                    style="background-color: var(--accent-color); color: white; padding: 10px 15px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                Solicitar Pontos
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
                 <div class="card balance" id="seu-saldo">
                     <div class="header">
                         <div class="icon-wrapper">

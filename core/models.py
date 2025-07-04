@@ -38,6 +38,9 @@ class UserProfile(models.Model):
     chave_pix = models.CharField(max_length=80, blank=True, null=True, help_text='Chave pix')
     banco = models.CharField(max_length=80, blank=True, null=True, help_text='Banco da chave Pix')
 
+   
+    atendido_por = models.ManyToManyField('Vendedora', blank=True, help_text='Vendedoras responsáveis pelo atendimento')
+
     def __str__(self):
         return (f'{self.user.username} - {self.code}')
 

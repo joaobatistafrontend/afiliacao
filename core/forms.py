@@ -8,6 +8,8 @@ class SignUpForm(UserCreationForm):
     whatsapp = forms.CharField(required=True, widget=forms.TextInput(attrs={'class':'input-field'}))
     chave_pix = forms.CharField(required=True, widget=forms.TextInput(attrs={'class':'input-field'}))
     banco = forms.CharField(required=True, widget=forms.TextInput(attrs={'class':'input-field'}))
+    ano = forms.CharField(required=True, widget=forms.TextInput(attrs={'class':'input-field'}))
+    modelo = forms.CharField(required=True, widget=forms.TextInput(attrs={'class':'input-field'}))
 
     class Meta:
         model = User
@@ -23,6 +25,8 @@ class SignUpForm(UserCreationForm):
         profile.chave_pix = self.cleaned_data['chave_pix']
         profile.banco = self.cleaned_data['banco']
         profile.email = self.cleaned_data['email']
+        profile.ano = self.cleaned_data['ano']
+        profile.modelo = self.cleaned_data['emmodeloail']
 
         if ref_code:
             # atribuir recomendador via código

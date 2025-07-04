@@ -26,6 +26,7 @@ class PainelView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         profile = get_object_or_404(UserProfile, user=request.user)
+        is_vendedor = Vendedora.objects.filter(user=profile.user).exists()
         form = SolicitarSaldoForm(saldo_disponivel=profile.ponts)
         context = {
             'my_recs': profile.get_recommended_profile(),
@@ -33,6 +34,7 @@ class PainelView(LoginRequiredMixin, View):
             'ponts': str(profile.ponts),
             'qrcode': profile.qr,
             'form': form,
+            'is_vendedor': is_vendedor,
         }
         return render(request, self.template_name, context)
 
@@ -45,15 +47,17 @@ class PainelView(LoginRequiredMixin, View):
             valor = form.cleaned_data['valor']
 
             MENSAGEM = (
-                    f"🎉 *Usuário solicitando R$ {valor},00 de saque!*\n\n"
-                    f"👤 *Usuário:* {profile.user.get_full_name() or profile.user}\n"
-                    f"👤 *Saldo em conta:* {profile.ponts}\n"
-                    f"📧 *Email:* {profile.user.email}\n"
-                    f"📱 *WhatsApp:* {profile.whatsapp}\n"
-                    f"🔗 *Código de Indicação:* {profile.code}\n"
-                    f"🙋‍♂️ *Indicado por:* {profile.recomended_by}\n"
-                    f"🗓️ *Data de Cadastro:* {profile.user.date_joined.strftime('%d/%m/%Y')}\n"
-                    )
+                f"🎉 *Usuário solicitando R$ {valor},00 de saque!*\n\n"
+                f"👤 *Usuário:* {(profile.user.get_full_name() or profile.user.username or '---')}\n"
+                f"👤 *Saldo em conta:* {profile.ponts if profile.ponts is not None else '---'}\n"
+                f"📧 *Email:* {profile.user.email or '---'}\n"
+                f"📱 *WhatsApp:* {profile.whatsapp or '---'}\n"
+                f"🔗 *Código de Indicação:* {profile.code or '---'}\n"
+                f"🙋‍♂️ *Indicado por:* "
+                    f"{profile.recomended_by.get_full_name() if profile.recomended_by else '---'}\n"
+                f"🗓️ *Data de Cadastro:* "
+                    f"{profile.user.date_joined.strftime('%d/%m/%Y') if profile.user.date_joined else '---'}\n"
+            )
             finaceiro_indicador = Finaceiro.objects.filter(responsavel=profile.recomended_by).first()
             if finaceiro_indicador:
                 enviar_mensagem([finaceiro_indicador.responsavel.userprofile.whatsapp], MENSAGEM)
@@ -66,7 +70,9 @@ class PainelView(LoginRequiredMixin, View):
         else:
             return render(request, 'home/painel.html', {'form': form})
 
-            
+
+
+
 
 class RankingView(LoginRequiredMixin, TemplateView):
     template_name = 'home/ranking.html'

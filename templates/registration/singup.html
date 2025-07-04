@@ -5,48 +5,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sing.css' %}">
 </head>
 <body>
     <div class="wrapper">
         <div class="form-wrapper sing-in">
             <form action="" method="post">{% csrf_token %}                
                 <h2>Bem Vindo</h2>
-                <div class="input-group">
-                    {{ form.username }}
-                    <label>Nome de usuário</label>
-                </div>
+                
+                <div class="form-grid">
+                    <div class="input-group">
+                        {{ form.username }}
+                        <label>Nome de usuário</label>
+                    </div>
 
-                <div class="input-group">
-                    {{ form.email }}
-                    <label>Email</label>
-                </div>
+                    <div class="input-group">
+                        {{ form.email }}
+                        <label>Email</label>
+                    </div>
 
-                <div class="input-group">
-                    {{ form.chave_pix }}
-                    <label>Chave pix</label>
-                </div>
+                    <div class="input-group">
+                        {{ form.chave_pix }}
+                        <label>Chave pix</label>
+                    </div>
 
-                 <div class="input-group">
-                    {{ form.banco }}
-                    <label>Banco</label>
-                </div>
+                    <div class="input-group">
+                        {{ form.banco }}
+                        <label>Banco</label>
+                    </div>
 
-                <div class="input-group">
-                    {{ form.whatsapp }}
-                    <label>WhatsApp</label>
-                </div>
+                    <div class="input-group">
+                        {{ form.whatsapp }}
+                        <label>WhatsApp</label>
+                    </div>
 
-                <div class="input-group">
-                    {{ form.password1 }}
-                    <label>Senha</label>
-                </div>
+                    <div class="input-group">
+                        {{ form.modelo }}
+                        <label>Modelo</label>
+                    </div>
 
-                <div class="input-group">
-                    {{ form.password2 }}
-                    <label>Confirma Senha</label>
-                </div>
+                    <div class="input-group">
+                        {{ form.ano }}
+                        <label>Ano do Veículo</label>
+                    </div>
 
+                    <div class="input-group">
+                        {{ form.password1 }}
+                        <label>Senha</label>
+                    </div>
+
+                    <div class="input-group">
+                        {{ form.password2 }}
+                        <label>Confirma Senha</label>
+                    </div>
+                </div>
 
                 <button type="submit">Cadastrar</button>
                 <div class="signup-link">
@@ -54,7 +66,6 @@
                     {% if form.errors %}
                         <p class="error-message">Corrija os seguintes erros antes de continuar:</p>
                         <ul style="color: red; list-style-type: none; padding: 0; margin: 0; font-size: 12px;">
-                        
                         {% for field in form %}
                             {% for error in field.errors %}
                             <li>{{ field.label }}: {{ error }}</li>
@@ -66,7 +77,6 @@
                         </ul>
                     {% endif %}
                 </div>
-
             </form>
         </div>
     </div>

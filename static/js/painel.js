@@ -61,3 +61,15 @@ function checkHamburger() {
 }
 window.addEventListener('resize', checkHamburger);
 window.addEventListener('DOMContentLoaded', checkHamburger);
+
+
+document.getElementById('download-qr-btn').addEventListener('click', function() {
+    const img = document.getElementById('qr-img');
+    const url = img.src;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'qr_{{ request.user.username }}.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+});

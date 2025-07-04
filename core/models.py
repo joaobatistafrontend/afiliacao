@@ -80,13 +80,6 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
         if self.code == '':
             self.code = generate_ref_code()
-        url = f"https://127.0.0.1:8000/{self.code}"
-        caminho_fundo = 'static\img\qr.png'
-        caminho_saida = f'media/qr/qr_{self.code}.png'
-        from .utils import gerar_qrcode_sobre_imagem
-        gerar_qrcode_sobre_imagem(url, self.code, caminho_fundo, caminho_saida)
-        with open(caminho_saida, 'rb') as img_file:
-            self.qr.save(f'qr_{self.code}.png', File(img_file), save=False)
         super().save(*args, **kwargs)
 
 
@@ -103,7 +96,24 @@ class Vendedora(models.Model):
         perfil = getattr(self.user, 'userprofile', None)
         whatsapp = perfil.whatsapp if perfil and perfil.whatsapp else 'Sem Telefone'
         return f'{self.user.username} - {whatsapp}'
-    
+
+    def save(self, *args, **kwargs):
+        perfil = getattr(self.user, 'userprofile', None)
+        if perfil and perfil.code:
+            try:
+                url = f"https://127.0.0.1:8000/{perfil.code}"
+                caminho_fundo = 'static/img/qr.png'
+                caminho_saida = f'media/qr/qr_{perfil.code}.png'
+                from .utils import gerar_qrcode_sobre_imagem
+                gerar_qrcode_sobre_imagem(url, perfil.code, caminho_fundo, caminho_saida)
+                with open(caminho_saida, 'rb') as img_file:
+                    perfil.qr.save(f'qr_{perfil.code}.png', File(img_file), save=False)
+                perfil.save()
+            except Exception as e:
+                # Log do erro ou apenas passe
+                pass
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Vendedora'
         verbose_name_plural = 'Vendedoras'

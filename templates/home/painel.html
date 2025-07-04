@@ -180,17 +180,13 @@
                     </div>
                     <div class="card share-earn" id="seu-qr">
                         <h3>Indique com seu QR CODE exclusivo!</h3>
-                        <img src="{{ qrcode.url }}" style="max-width:160px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.12); margin-bottom:10px;">
+                        <img id="qr-img" src="{{ qrcode.url }}" alt="QR Code" style="max-width:160px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.12); margin-bottom:10px;">
                         <button class="share-link-button" id="download-qr-btn">
-                            <i class="fas fa-copy"></i>
-                            baixe sua arte
+                            <i class="fas fa-download"></i>
+                            Baixe sua arte
                         </button>
                     </div>
-                {% endif %}
-
-                
-
-
+                {% endif %}            
             </section>
         </div>
     </main>

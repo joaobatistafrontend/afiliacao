@@ -11,25 +11,32 @@ from .forms import *
 from .utils import enviar_mensagem
 from django.db.models import F
 
+
+def get_user_profile(user):
+    return get_object_or_404(UserProfile, user=user)
+
+    
+def get_vendedor():
+    return Vendedora.objects.order_by('last_notified').first()
+
+
 class PerfilView(LoginRequiredMixin, TemplateView):
     template_name = 'home/perfil.html'
     model = UserProfile
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        profile = get_object_or_404(UserProfile, user=self.request.user)
-        context['atendido_por'] = profile.atendido_por.all()
-        context['nomes_vendedoras'] = [v.user.get_full_name() or v.user.username for v in profile.atendido_por.all()]
-
-        
+        profile = get_user_profile(self.request.user)
+        is_vendedor = Vendedora.objects.filter(user=profile.user).exists()
         context['my_recs'] = profile.get_recommended_profile()
+        context ['is_vendedor'] = is_vendedor
         return context
 
 class PainelView(LoginRequiredMixin, View):
     template_name = 'home/painel.html'
 
     def get(self, request, *args, **kwargs):
-        profile = get_object_or_404(UserProfile, user=request.user)
+        profile = get_user_profile(self.request.user)
         is_vendedor = Vendedora.objects.filter(user=profile.user).exists()
         form = SolicitarSaldoForm(saldo_disponivel=profile.ponts)
         vendedor = Vendedora.objects.order_by('last_notified').first()
@@ -59,7 +66,7 @@ class PainelView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        profile = get_object_or_404(UserProfile, user=request.user)
+        profile = get_user_profile(self.request.user)
         form = SolicitarSaldoForm(request.POST, saldo_disponivel=profile.ponts)
 
         if form.is_valid():
@@ -102,10 +109,12 @@ class RankingView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(UserProfile, user=self.request.user)
-        context['my_recs'] = profile.get_recommended_profile()
+        is_vendedor = Vendedora.objects.filter(user=profile.user).exists()
         glocal = UserProfile.objects.all()
         ranking = profile.get_recommended_global()
-        context['ranking'] = ranking
+        context['my_recs'] = profile.get_recommended_profile()
+        context['ranking'] = ranking,
+        context ['is_vendedor'] = is_vendedor
         return context
 
 class IndicacaoView(LoginRequiredMixin, ListView):
@@ -115,7 +124,9 @@ class IndicacaoView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(UserProfile, user=self.request.user)
+        is_vendedor = Vendedora.objects.filter(user=profile.user).exists()
         context['my_recs'] = profile.get_recommended_profile()
+        context ['is_vendedor'] = is_vendedor
         return context
 
 

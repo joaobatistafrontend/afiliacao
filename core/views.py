@@ -18,6 +18,10 @@ class PerfilView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(UserProfile, user=self.request.user)
+        context['atendido_por'] = profile.atendido_por.all()
+        context['nomes_vendedoras'] = [v.user.get_full_name() or v.user.username for v in profile.atendido_por.all()]
+
+        
         context['my_recs'] = profile.get_recommended_profile()
         return context
 
@@ -130,10 +134,11 @@ class SignUpView(View):
             instance = form.save()
             user_profile = UserProfile.objects.get(user=instance)
             vendedor = Vendedora.objects.order_by('last_notified').first()
-    
             if profile_id is not None:
                 try:
                     recommended_by_profile = UserProfile.objects.get(id=profile_id)
+                    vendedor_proprio = recommended_by_profile.atendido_por.all()
+                    vendedor_proprio = vendedor_proprio.order_by('last_notified').first()
                     recommended_by_profile.save()
                     user_profile.recomended_by = recommended_by_profile.user
                     user_profile.save()
@@ -149,14 +154,14 @@ class SignUpView(View):
                         f"🗓️ *Data de Cadastro:* {instance.date_joined.strftime('%d/%m/%Y')}\n"
                     )
                     vendedor_indicador = Vendedora.objects.filter(user=recommended_by_profile.user).first()
-                    if vendedor_indicador:
+                    if vendedor_proprio:
+                        enviar_mensagem([vendedor_proprio.user.userprofile.whatsapp], MENSAGEM)
+                        vendedor_indicador.last_notified = timezone.now()
+                        vendedor_indicador.save()
+                    elif vendedor_indicador:
                         enviar_mensagem([vendedor_indicador.user.userprofile.whatsapp], MENSAGEM)
                         vendedor_indicador.last_notified = timezone.now()
                         vendedor_indicador.save()
-                    # else:
-                    #     enviar_mensagem([vendedor.user.userprofile.whatsapp], MENSAGEM)
-                    #     vendedor.last_notified = timezone.now()
-                    #     vendedor.save()
                 except UserProfile.DoesNotExist:
                     pass
             else:

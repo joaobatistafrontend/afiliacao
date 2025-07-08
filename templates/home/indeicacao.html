@@ -43,14 +43,13 @@
         <main>
             <div class="main-content">
                 <div class="indication-list">
-                    {% if my_recs %}
-                        {% for user in my_recs %}
+                        {% for user in ranking %}
                             <div class="indication-card" data-name="{{ user.user.get_full_name }}" data-indications="{{ user.total_indicacoes|default:0 }}">
                                 <div class="indication-avatar">
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div class="indication-info">
-                                    <h3>{{ user.user.get_full_name|default:user.user.username }}</h3>
+                                    <h3>{{ user.name|default:user.username }}</h3>
                                     <p>Indicado em: {{ user.created|date:"d/m/Y" }}</p>
                                 </div>
                                 <span class="indication-badge" title="Indicações deste usuário">
@@ -59,11 +58,6 @@
                                 </span>
                             </div>
                         {% endfor %}
-                    {% else %}
-                        <div class="no-indications">
-                            <i class="fas fa-info-circle"></i> Você ainda não fez nenhuma indicação.
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </main>

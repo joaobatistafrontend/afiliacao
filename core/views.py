@@ -108,12 +108,12 @@ class RankingView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        profile = get_object_or_404(UserProfile, user=self.request.user)
+        profile = get_user_profile(self.request.user)
         is_vendedor = Vendedora.objects.filter(user=profile.user).exists()
         glocal = UserProfile.objects.all()
         ranking = profile.get_recommended_global()
         context['my_recs'] = profile.get_recommended_profile()
-        context['ranking'] = ranking,
+        context['ranking'] = ranking
         context ['is_vendedor'] = is_vendedor
         return context
 

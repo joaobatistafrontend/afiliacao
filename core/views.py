@@ -35,15 +35,15 @@ class PerfilView(LoginRequiredMixin, TemplateView):
 class PainelView(LoginRequiredMixin, View):
     template_name = 'home/painel.html'
 
-    def get(self, request, *args, **kwargs):
-        profile = get_user_profile(self.request.user)
+    def get_context(self, request, form=None):
+        profile = get_user_profile(request.user)
         is_vendedor = Vendedora.objects.filter(user=profile.user).exists()
-        form = SolicitarSaldoForm(saldo_disponivel=profile.ponts)
+        if not form:
+            form = SolicitarSaldoForm(saldo_disponivel=profile.ponts)
         vendedor = Vendedora.objects.order_by('last_notified').first()
         indicador = None
         zap_indicador = None
-    
-        # Busca o perfil do indicador (quem indicou o usuário atual)
+
         if profile.recomended_by:
             try:
                 indicador = UserProfile.objects.get(user=profile.recomended_by)
@@ -52,9 +52,8 @@ class PainelView(LoginRequiredMixin, View):
                 zap_indicador = None
         else:
             zap_indicador = vendedor.user.userprofile.whatsapp
-                
-    
-        context = {
+
+        return {
             'my_recs': profile.get_recommended_profile(),
             'ref_code': profile.code,
             'ponts': str(profile.ponts),
@@ -63,24 +62,23 @@ class PainelView(LoginRequiredMixin, View):
             'is_vendedor': is_vendedor,
             'zap_indicador': zap_indicador,
         }
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context(request)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        profile = get_user_profile(self.request.user)
+        profile = get_user_profile(request.user)
         form = SolicitarSaldoForm(request.POST, saldo_disponivel=profile.ponts)
 
         if form.is_valid():
-            instance = form.cleaned_data
             valor = form.cleaned_data['valor']
-
             MENSAGEM = (
                 f"🎉 *Usuário solicitando R$ {valor},00 de saque!*\n\n"
                 f"👤 *Usuário:* {(profile.user.get_full_name() or profile.user.username or '---')}\n"
                 f"👤 *Saldo em conta:* {profile.ponts if profile.ponts is not None else '---'}\n"
                 f"📧 *Email:* {profile.user.email or '---'}\n"
                 f"📱 *WhatsApp:* {profile.whatsapp or '---'}\n"
-                f"🚗 *Modelo do carro:* {profile.modelo_carro or '---'}\n"
-                f"📅 *Ano do carro:* {profile.ano_carro or '---'}\n"
                 f"🔗 *Código de Indicação:* {profile.code or '---'}\n"
                 f"🙋‍♂️ *Indicado por:* "
                     f"{profile.recomended_by.get_full_name() if profile.recomended_by else '---'}\n"
@@ -97,10 +95,8 @@ class PainelView(LoginRequiredMixin, View):
 
             return redirect('painel_view')
         else:
-            return render(request, 'home/painel.html', {'form': form})
-
-
-
+            context = self.get_context(request, form=form)
+            return render(request, self.template_name, context)
 
 
 class RankingView(LoginRequiredMixin, TemplateView):
